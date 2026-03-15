@@ -1,0 +1,309 @@
+---
+import { Image } from "astro:assets";
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import Header from "../components/Header.astro";
+import Button from "../components/Button.astro";
+
+type Props = CollectionEntry<"blog">["data"];
+
+const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+
+const posts = (await getCollection("blog")).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const { slug } = Astro.params;
+const currentPostIndex = posts.findIndex((post) => post.id === slug);
+
+const nextPost = posts[currentPostIndex - 1];
+const prevPost = posts[currentPostIndex + 1];
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+		<style>
+			:global(.link-end) {
+				/* display: block; */
+				text-align: right;
+			}
+
+			.top {
+				display: grid;
+				grid-auto-flow: row;
+				margin-bottom: var(--space-xl);
+
+				grid-template-areas:
+					"button button button"
+					"img img img"
+					"title title title"
+					"date date date"
+					"intro intro intro"
+					"links links links"
+					"img--content img--content img--content";
+			}
+
+			.intro {
+				margin: 6rem 0rem;
+
+				justify-self: center;
+				text-align: center;
+				max-width: 66.66%;
+
+				font-size: var(--fs-2);
+				font-weight: 200;
+				line-height: 140%;
+				white-space: pre-line;
+
+				grid-area: intro;
+			}
+
+			.date {
+				font-size: var(--fs-0);
+				font-weight: 300;
+				display: flex;
+				margin: var(--space-s);
+				margin-top: 0rem;
+				justify-content: space-between;
+
+				grid-area: date;
+			}
+
+			.title {
+				margin: 0 var(--space-xs);
+
+				font-size: var(--fs-4);
+				font-weight: 600;
+				line-height: 110%;
+				text-transform: uppercase;
+				margin-bottom: 0.5rem;
+				padding-top: 0.5rem;
+
+				grid-area: title;
+			}
+
+			.image--header {
+				height: 70dvh;
+				width: 100%;
+				object-fit: cover;
+
+				grid-area: img;
+			}
+
+			.content {
+				margin: 0 var(--space-s);
+			}
+
+			.button--top {
+				grid-area: button;
+				margin-left: var(--space-s);
+				padding-top: 0.125rem;
+			}
+
+			.buttons--bottom {
+				display: flex;
+				justify-content: space-between;
+				margin: var(--space-m);
+			}
+
+			:global(.note) {
+				display: flex;
+				flex-direction: column;
+				border: 1px solid var(--color-text);
+				color: var(--color-text);
+				padding: var(--space-xs);
+				margin-top: var(--space-m);
+			}
+
+			:global(.note)::before {
+				content: "Note";
+				font-weight: 600;
+				margin-bottom: 0.25rem;
+			}
+
+			:global(.image-grid) {
+				column-gap: var(--space-3xs);
+				margin-top: var(--space-s);
+			}
+
+			:global(.image-center) {
+				text-align: center;
+				margin-top: var(--space-m);
+			}
+
+			:global(.image-center img) {
+				width: auto;
+				height: 50vh;
+				object-fit: contain;
+				break-inside: avoid;
+				margin-bottom: var(--space-s);
+			}
+
+			.content :global(ol) {
+				list-style: decimal;
+				margin-left: 3rem;
+				padding-top: var(--space-3xs);
+				padding-bottom: var(--space-m);
+			}
+
+			.content :global(ol ul),
+			.content :global(ol + ul) {
+				margin-top: calc(var(--space-3xs) * -1);
+				margin-bottom: var(--space-3xs);
+			}
+
+			.content :global(ol + ul) {
+				margin-left: var(--space-xl);
+				margin-top: calc(var(--space-m) * -1);
+			}
+
+			.content :global(ul) {
+				list-style: square;
+				margin-left: 3rem;
+			}
+
+			.content :global(li) {
+				padding-top: var(--space-3xs);
+			}
+
+			.content :global(ol ul) {
+				margin-top: var(--space-3xs);
+				margin-bottom: var(--space-3xs);
+			}
+
+			:global(.image-grid img) {
+				width: 100%;
+				height: auto;
+				break-inside: avoid;
+				margin-bottom: var(--space-s);
+			}
+
+			@media screen and (min-width: 48rem) {
+				.top {
+					display: grid;
+					grid-template-columns: minmax(33.33%, 40%) 1fr min-content;
+					margin: 0 var(--space-m);
+					column-gap: var(--space-xs);
+
+					grid-template-areas:
+						"button . ."
+						"img img img"
+						"title title date"
+						"intro intro intro"
+						". links links"
+						"img--content img--content img--content";
+				}
+
+				:global(.image-grid) {
+					columns: 2;
+				}
+
+				.button--top {
+					margin-left: 0;
+				}
+
+				.date {
+					flex-direction: column;
+					text-wrap: nowrap;
+					justify-content: flex-end;
+					margin: 0;
+					margin-bottom: 0.3rem;
+				}
+
+				.title {
+					margin: 0;
+					padding: 0;
+					margin-top: var(--space-m);
+				}
+
+				.content {
+					width: calc(100% - 2 * var(--space-s));
+					max-width: 55rem;
+					margin: 0 auto;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<Header />
+		<main>
+			<div class="top">
+				<div class="button button--top">
+					<Button btnText="back" btnFunction="back" />
+				</div>
+
+				{
+					heroImage && (
+						<Image
+							width={1020}
+							height={510}
+							src={heroImage}
+							alt=""
+							class="image image--header"
+						/>
+					)
+				}
+
+				<h1 class="title">{title}</h1>
+
+				<div class="date">
+					<div>
+						<FormattedDate date={pubDate} />
+						{
+							updatedDate && (
+								<div class="last-updated-on">
+									Last updated on{" "}
+									<FormattedDate date={updatedDate} />
+								</div>
+							)
+						}
+					</div>
+				</div>
+
+				<p class="intro">
+					{description}
+				</p>
+			</div>
+
+			<div class="content">
+				<slot />
+			</div>
+
+			<div class="buttons buttons--bottom">
+				{
+					nextPost ? (
+						<Button
+							btnText="next post"
+							btnURL={
+								import.meta.env.BASE_URL +
+								`/blog/${nextPost.id}/`
+							}
+							btnFunction="next"
+						/>
+					) : (
+						<div />
+					)
+				}
+				{
+					prevPost ? (
+						<Button
+							btnText="previous post"
+							btnURL={
+								import.meta.env.BASE_URL +
+								`/blog/${prevPost.id}/`
+							}
+							btnFunction="prev"
+						/>
+					) : (
+						<div />
+					)
+				}
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>

@@ -1,0 +1,137 @@
+---
+import { SITE_TITLE } from "../consts";
+import HeaderLink from "./HeaderLink.astro";
+---
+
+<style>
+	header {
+		position: sticky;
+	}
+
+	.nav {
+		display: flex;
+		justify-content: space-between;
+
+		margin: 1rem;
+	}
+
+	.nav__title {
+		font-size: var(--fs-3);
+		font-style: normal;
+		font-weight: 600;
+		line-height: normal;
+	}
+
+	.nav__title a::after {
+		background-color: transparent;
+	}
+
+	.nav__list {
+		display: flex;
+		font-weight: 300;
+	}
+
+	.nav__title:hover {
+		animation: wiggle 0.5s ease; /* Apply the wiggle animation on hover */
+	}
+
+	@keyframes wiggle {
+		0% {
+			transform: rotate(0deg); /* Start at the original position */
+		}
+		25% {
+			transform: rotate(5deg); /* Rotate a little bit to the right */
+		}
+		50% {
+			transform: rotate(-5deg); /* Rotate a little bit to the left */
+		}
+		75% {
+			transform: rotate(5deg); /* Rotate a little bit to the right */
+		}
+		100% {
+			transform: rotate(0deg); /* End at the original position */
+		}
+	}
+
+	@media screen and (min-width: 48rem) {
+		.nav {
+			display: flex;
+			justify-content: space-between;
+			align-items: stretch;
+		}
+
+		.nav__title {
+			grid-column: 1;
+			grid-row: 1;
+
+			font-size: var(--fs-3);
+			font-style: normal;
+			font-weight: 600;
+			line-height: normal;
+
+			align-self: center;
+		}
+
+		.nav__list {
+			align-self: center;
+		}
+
+		.nav__list-item {
+			padding: 0;
+			margin: 0;
+		}
+
+		.nav__list-item + .nav__list-item::before {
+			content: "/";
+			padding-left: 0.6rem;
+			padding-right: 0.2rem;
+		}
+
+		header {
+			top: 0;
+			padding: 1rem;
+			/* margin: calc(var(--space-m) - 1rem); */
+			background-color: (var(--bg-color) / 100%);
+			backdrop-filter: blur(20px);
+			z-index: 100;
+
+			mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+			-webkit-mask-image: linear-gradient(
+				to bottom,
+				black 75%,
+				transparent 100%
+			);
+		}
+	}
+</style>
+
+<header class="header">
+	<nav class="nav">
+		<h2 class="nav__title">
+			<a href={import.meta.env.BASE_URL}>{SITE_TITLE}</a>
+		</h2>
+		<div class="nav__list">
+			<div class="nav__list-item">
+				<HeaderLink href={import.meta.env.BASE_URL + "/blog"}
+					>blog</HeaderLink
+				>
+			</div>
+			<div class="nav__list-item">
+				<HeaderLink href={import.meta.env.BASE_URL + "/notes"}
+					>notes</HeaderLink
+				>
+			</div>
+			<div class="nav__list-item">
+				<HeaderLink href={import.meta.env.BASE_URL + "/pictures"}
+					>pictures</HeaderLink
+				>
+			</div>
+			<div class="nav__list-item">
+				<HeaderLink
+					href={import.meta.env.BASE_URL + "/technicalOverview"}
+					>technical overview</HeaderLink
+				>
+			</div>
+		</div>
+	</nav>
+</header>

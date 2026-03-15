@@ -1,0 +1,100 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import BlogList from "../components/BlogList.astro";
+
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import Button from "../components/Button.astro";
+
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog"))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3);
+---
+
+<!doctype html>
+<html lang="en">
+	<style>
+		.hero {
+			display: grid;
+			grid-template-columns: 1fr;
+			grid-template-rows: 65vh;
+			align-items: center;
+		}
+		.hero__content {
+			margin-bottom: 10vh;
+		}
+		.title {
+			font-size: var(--fs-4);
+			font-weight: 700;
+			text-align: center;
+		}
+		.subtitle {
+			font-size: var(--fs-1);
+			font-style: italic;
+			text-align: center;
+		}
+
+		.content {
+			margin: 0 var(--space-m);
+		}
+
+		h2 {
+			font-weight: 200;
+			font-size: var(--fs-2);
+			margin: 0;
+			padding: 0;
+		}
+
+		.blog__header {
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+		}
+
+		.blog {
+			margin-bottom: var(--space-xl);
+		}
+
+		.video {
+			display: block;
+			width: 60vw;
+			height: 60vh;
+			border: none;
+			margin: 0 auto;
+		}
+	</style>
+
+	<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+
+	<body>
+		<Header />
+		<main>
+			<div class="hero">
+				<div class="hero__content">
+					<h1 class="title">Plotter</h1>
+					<p class="subtitle">
+						Welcome to my blog, where I share my pen plotter journey.
+					</p>
+				</div>
+				<div class="content">
+					<!-- Latest posts -->
+					<section class="blog">
+						<div class="blog__header">
+							<h2>Latest posts</h2>
+							<Button
+								btnText="view all posts"
+								btnURL={import.meta.env.BASE_URL + "/blog"}
+								btnFunction="link-internal"
+							/>
+						</div>
+						<BlogList posts={posts} />
+					</section>
+				</div>
+			</div>
+			<Footer />
+		</main>
+	</body>
+</html>
