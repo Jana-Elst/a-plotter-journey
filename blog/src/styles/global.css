@@ -195,6 +195,7 @@ code {
 
 pre {
 	padding: 1.5em;
+	margin: var(--space-2xs) 0;
 	border-radius: 8px;
 }
 

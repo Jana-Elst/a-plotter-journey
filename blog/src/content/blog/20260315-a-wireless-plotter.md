@@ -45,6 +45,7 @@ I didn't want to SSH into my Pi and type long commands every time I wanted to dr
 I used a systemd service to make this happen. This script runs in the background the second the Pi gets power.
 
 The Final saxi.service file:
+
 ````` ini
 [Unit]
 Description=Saxi Plotter Server
@@ -65,6 +66,7 @@ WantedBy=multi-user.target
 `````
 
 Run the following commands to enable the service:
+
 `````bash
 sudo systemctl daemon-reload
 sudo systemctl enable saxi
@@ -79,8 +81,12 @@ sudo systemctl status saxi.service
 ## Troubleshooting
 If you get an ERR_SSL_PROTOCOL_ERROR, it’s because your browser is trying to be fancy and use https. The Pi is simple, it only speaks http.
 
+<br>
+
 - **Wrong:** https://[IP_ADDRESS]:9080
 - **Right:** http://[IP_ADDRESS]:9080
+
+<br>
 
 Now, any device on my network can just go to that URL and start plotting. No cables, no terminal, no stress. (Well, less stress).
 
