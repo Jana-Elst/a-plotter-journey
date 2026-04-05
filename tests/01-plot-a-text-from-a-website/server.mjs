@@ -25,12 +25,42 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // --- PEN ACTION ENDPOINT ---
+  if (req.url === '/api/pen-action' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', async () => {
+      try {
+        const { action, penUp, penDown } = JSON.parse(body);
+        
+        let axicliCmd;
+        if (action === 'up') {
+            axicliCmd = `${AXICLI_PATH} /dev/null -m manual -M raise_pen -u ${penUp}`;
+        } else if (action === 'down') {
+            axicliCmd = `${AXICLI_PATH} /dev/null -m manual -M lower_pen -d ${penDown}`;
+        }
+
+        console.log(`Executing: ${axicliCmd}`);
+        
+        await execPromise(axicliCmd);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true }));
+      } catch (error) {
+        console.error(`Pen action error: ${error.message}`);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Pen action failed', details: error.message }));
+      }
+    });
+    return;
+  }
+
+  // --- PLOT ENDPOINT ---
   if (req.url === '/api/plot' && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
     req.on('end', async () => {
       try {
-        const { svg } = JSON.parse(body);
+        const { svg, penUp, penDown } = JSON.parse(body);
         if (!svg) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Missing SVG data' }));
@@ -51,8 +81,8 @@ const server = http.createServer(async (req, res) => {
           await execPromise(vpypeCmd);
           console.log(`SVG optimized at ${outputPath}`);
 
-          // 2. Run axicli to plot the optimized SVG
-          const axicliCmd = `${AXICLI_PATH} "${outputPath}"`;
+          // 2. Run axicli to plot the optimized SVG with specific heights
+          const axicliCmd = `${AXICLI_PATH} "${outputPath}" -u ${penUp} -d ${penDown}`;
           console.log(`Executing: ${axicliCmd}`);
 
           const { stdout, stderr } = await execPromise(axicliCmd);
