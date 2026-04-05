@@ -52,12 +52,12 @@ Description=Saxi Plotter Server
 After=network.target
 
 [Service]
-User=janaelst
-WorkingDirectory=/home/janaelst/.nvm/versions/node/v20.20.1/lib/node_modules/saxi
+User=<username>
+WorkingDirectory=/home/<username>/.nvm/versions/node/v20.20.1/lib/node_modules/saxi
 # Tell the Pi where the Node engine is hidden
-Environment="PATH=/home/janaelst/.nvm/versions/node/v20.20.1/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PATH=/home/<username>/.nvm/versions/node/v20.20.1/bin:/usr/local/bin:/usr/bin:/bin"
 # Run the specific cli.mjs file
-ExecStart=/home/janaelst/.nvm/versions/node/v20.20.1/bin/node cli.mjs
+ExecStart=/home/<username>/.nvm/versions/node/v20.20.1/bin/node cli.mjs
 Restart=always
 RestartSec=10
 
